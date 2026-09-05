@@ -1,0 +1,10 @@
+.{
+    .mode = .local, // .local or .server
+    .server_host = "127.0.0.1",
+    .server_port = 3389,
+    .local_host = "127.0.0.1",
+    .local_port = 1080,
+    .password = "t7XRzLCvgsH4r4r669cyqPnVNFG2c/HC5Tt+MjINJB0=",
+    .method = .blake3_aes_256_gcm,
+    .enable_udp = true,
+}
