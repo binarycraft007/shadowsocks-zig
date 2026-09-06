@@ -207,9 +207,11 @@ pub fn resolve(self: Address, io: Io) !IpAddress {
             const host_name = HostName.init(domain_name) catch return error.InvalidHostName;
             var queue_buf: [16]HostName.LookupResult = undefined;
             var queue: Io.Queue(HostName.LookupResult) = .init(&queue_buf);
+            defer queue.close(io);
 
             var lookup_future = io.async(lookupTask, .{ host_name, io, &queue, self.port });
-            defer lookup_future.cancel(io) catch {};
+            defer _ = lookup_future.cancel(io) catch {};
+            defer _ = lookup_future.await(io) catch {};
 
             var fallback_ip6: ?IpAddress = null;
 

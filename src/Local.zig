@@ -56,10 +56,12 @@ pub fn init(
 pub fn listenAndServe(self: *const Local, io: Io) !void {
     if (self.enable_udp) {
         var tcp_task = try io.concurrent(runTcpServerTask, .{ io, self });
-        defer tcp_task.cancel(io) catch {};
+        defer _ = tcp_task.cancel(io) catch {};
+        defer _ = tcp_task.await(io) catch {};
 
         var udp_task = try io.concurrent(runUdpRelayTask, .{ io, self });
-        defer udp_task.cancel(io) catch {};
+        defer _ = udp_task.cancel(io) catch {};
+        defer _ = udp_task.await(io) catch {};
 
         _ = tcp_task.await(io) catch {};
         _ = udp_task.await(io) catch {};

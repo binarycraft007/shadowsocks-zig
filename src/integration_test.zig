@@ -138,9 +138,20 @@ test "End-to-end SOCKS5 Shadowsocks tunnel with echo server" {
         );
 
         var fut_echo = try io.concurrent(runEchoServerOnce, .{ io, &echo_server });
+        defer _ = fut_echo.cancel(io) catch {};
+        defer _ = fut_echo.await(io) catch {};
+
         var fut_srv = try io.concurrent(runServerOnce, .{ io, &ss_server_listener, &ss_server });
+        defer _ = fut_srv.cancel(io) catch {};
+        defer _ = fut_srv.await(io) catch {};
+
         var fut_loc = try io.concurrent(runLocalOnce, .{ io, &ss_local_listener, &ss_local });
+        defer _ = fut_loc.cancel(io) catch {};
+        defer _ = fut_loc.await(io) catch {};
+
         var fut_cli = try io.concurrent(runTcpClientOnce, .{ io, local_ip, echo_port, "Hello Shadowsocks via OS assigned ports!" });
+        defer _ = fut_cli.cancel(io) catch {};
+        defer _ = fut_cli.await(io) catch {};
 
         try fut_cli.await(io);
         try fut_loc.await(io);
@@ -187,9 +198,20 @@ test "End-to-end SOCKS5 IPv6 Shadowsocks tunnel" {
     );
 
     var fut_echo = try io.concurrent(runEchoServerOnce, .{ io, &echo_server });
+    defer _ = fut_echo.cancel(io) catch {};
+    defer _ = fut_echo.await(io) catch {};
+
     var fut_srv = try io.concurrent(runServerOnce, .{ io, &ss_server_listener, &ss_server });
+    defer _ = fut_srv.cancel(io) catch {};
+    defer _ = fut_srv.await(io) catch {};
+
     var fut_loc = try io.concurrent(runLocalOnce, .{ io, &ss_local_listener, &ss_local });
+    defer _ = fut_loc.cancel(io) catch {};
+    defer _ = fut_loc.await(io) catch {};
+
     var fut_cli = try io.concurrent(runTcpClientIp6Once, .{ io, local_ip, echo_port, ip6_loopback, "Hello IPv6 Shadowsocks!" });
+    defer _ = fut_cli.cancel(io) catch {};
+    defer _ = fut_cli.await(io) catch {};
 
     try fut_cli.await(io);
     try fut_loc.await(io);
@@ -287,9 +309,20 @@ test "End-to-end Shadowsocks 2022 SOCKS5 tunnel with echo server" {
         );
 
         var fut_echo = try io.concurrent(runEchoServerOnce, .{ io, &echo_server });
+        defer _ = fut_echo.cancel(io) catch {};
+        defer _ = fut_echo.await(io) catch {};
+
         var fut_srv = try io.concurrent(runServerOnce, .{ io, &ss_server_listener, &ss_server });
+        defer _ = fut_srv.cancel(io) catch {};
+        defer _ = fut_srv.await(io) catch {};
+
         var fut_loc = try io.concurrent(runLocalOnce, .{ io, &ss_local_listener, &ss_local });
+        defer _ = fut_loc.cancel(io) catch {};
+        defer _ = fut_loc.await(io) catch {};
+
         var fut_cli = try io.concurrent(runTcpClientOnce, .{ io, local_ip, echo_port, "Hello Shadowsocks 2022 Edition!" });
+        defer _ = fut_cli.cancel(io) catch {};
+        defer _ = fut_cli.await(io) catch {};
 
         try fut_cli.await(io);
         try fut_loc.await(io);
@@ -361,9 +394,20 @@ test "End-to-end SOCKS5 UDP Associate Shadowsocks tunnel with UDP echo server" {
         );
 
         var fut_echo = try io.concurrent(runUdpEchoServerOnce, .{ io, &echo_sock });
+        defer _ = fut_echo.cancel(io) catch {};
+        defer _ = fut_echo.await(io) catch {};
+
         var fut_srv = try io.concurrent(runServerUdpOnce, .{ io, &ss_server, &srv_udp_sock, &srv_forward_sock });
+        defer _ = fut_srv.cancel(io) catch {};
+        defer _ = fut_srv.await(io) catch {};
+
         var fut_loc = try io.concurrent(runLocalUdpOnce, .{ io, &ss_local, &loc_udp_inbound, &loc_udp_outbound });
+        defer _ = fut_loc.cancel(io) catch {};
+        defer _ = fut_loc.await(io) catch {};
+
         var fut_cli = try io.concurrent(runClientUdpTest, .{ io, local_udp_port, echo_port });
+        defer _ = fut_cli.cancel(io) catch {};
+        defer _ = fut_cli.await(io) catch {};
 
         try fut_cli.await(io);
         try fut_loc.await(io);

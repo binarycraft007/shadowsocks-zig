@@ -363,9 +363,11 @@ pub fn pipe(
 
     var forward = try io.concurrent(tunnelTask, .{ io, .forward, r1, w2, s1, s2, &queue });
     defer _ = forward.cancel(io);
+    defer _ = forward.await(io);
 
     var backward = try io.concurrent(tunnelTask, .{ io, .backward, r2, w1, s2, s1, &queue });
     defer _ = backward.cancel(io);
+    defer _ = backward.await(io);
 
     _ = queue.getOne(io) catch {};
 
